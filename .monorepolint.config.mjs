@@ -1,4 +1,3 @@
-// @ts-check
 import * as path from "node:path";
 import { glob } from "glob";
 import * as fs from "node:fs";
@@ -19,7 +18,6 @@ const MAIN_PACKAGE = "@turf/turf";
 
 const TAPE_PACKAGES = []; // projects that have tape tests
 const TYPES_PACKAGES = []; // projects that have types tests
-const BENCH_PACKAGES = []; // projects that have benchmarks
 
 // iterate all the packages and figure out what buckets everything falls into
 const __dirname = new URL(".", import.meta.url).pathname;
@@ -96,24 +94,17 @@ export default {
       options: { templateFile: "./templates/package-js/tsconfig.json" },
       includePackages: JS_PACKAGES,
     }),
-    fileContents({
+    standardTsconfig({
       options: {
-        file: "tsconfig.build.json",
-        templateFile: "./templates/package/tsconfig.build.json",
-      },
-      includePackages: [...TS_PACKAGES, ...JS_PACKAGES],
-    }),
-    fileContents({
-      options: {
-        file: "tsup.config.ts",
-        templateFile: "./templates/package/tsup.config.ts",
+        file: "tsconfig.cjs.json",
+        templateFile: "./templates/package/tsconfig.cjs.json",
       },
       includePackages: [...TS_PACKAGES, MAIN_PACKAGE],
     }),
-    fileContents({
+    standardTsconfig({
       options: {
-        file: "tsup.config.ts",
-        templateFile: "./templates/package-js/tsup.config.ts",
+        file: "tsconfig.cjs.json",
+        templateFile: "./templates/package-js/tsconfig.cjs.json",
       },
       includePackages: JS_PACKAGES,
     }),
@@ -121,7 +112,7 @@ export default {
       options: {
         entries: {
           type: "module",
-          main: "dist/cjs/index.cjs",
+          main: "dist/cjs/index.js",
           module: "dist/esm/index.js",
           types: "dist/esm/index.d.ts",
           sideEffects: false,
@@ -142,8 +133,8 @@ export default {
                 default: "./dist/esm/index.js",
               },
               require: {
-                types: "./dist/cjs/index.d.cts",
-                default: "./dist/cjs/index.cjs",
+                types: "./dist/cjs/index.d.ts",
+                default: "./dist/cjs/index.js",
               },
             },
           },
@@ -156,7 +147,7 @@ export default {
       options: {
         entries: {
           type: "module",
-          main: "dist/cjs/index.cjs",
+          main: "dist/cjs/index.js",
           module: "dist/esm/index.js",
           types: "dist/esm/index.d.ts",
           sideEffects: false,
@@ -171,8 +162,8 @@ export default {
                 default: "./dist/esm/index.js",
               },
               require: {
-                types: "./dist/cjs/index.d.cts",
-                default: "./dist/cjs/index.cjs",
+                types: "./dist/cjs/index.d.ts",
+                default: "./dist/cjs/index.js",
               },
             },
           },
@@ -180,6 +171,34 @@ export default {
       },
       includePackages: [...TS_PACKAGES, ...JS_PACKAGES],
     }),
+
+    // packageEntry({
+    //   options: {
+    //     entries: {
+    //       exports: {
+    //         ".": {
+    //           types: "./index.ts",
+    //           default: "./index.ts",
+    //         },
+    //       },
+    //     },
+    //   },
+    //   includePackages: [...TS_PACKAGES],
+    // }),
+
+    // packageEntry({
+    //   options: {
+    //     entries: {
+    //       exports: {
+    //         ".": {
+    //           types: "./index.d.ts",
+    //           default: "./index.js",
+    //         },
+    //       },
+    //     },
+    //   },
+    //   includePackages: [...JS_PACKAGES],
+    // }),
 
     packageEntry({
       options: {
@@ -211,7 +230,10 @@ export default {
     packageScript({
       options: {
         scripts: {
-          build: "tsup",
+          build: "pnpm run /build:.*/",
+          "build:cjs": "tsc -b tsconfig.cjs.json",
+          "build:esm": "tsc -b",
+          "cjs-package-json": "",
         },
       },
       includePackages: [...TS_PACKAGES, ...JS_PACKAGES, MAIN_PACKAGE],
