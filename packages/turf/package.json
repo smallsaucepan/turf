@@ -44,7 +44,7 @@
     "sample"
   ],
   "type": "module",
-  "main": "dist/cjs/index.cjs",
+  "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
   "exports": {
@@ -55,8 +55,8 @@
         "default": "./dist/esm/index.js"
       },
       "require": {
-        "types": "./dist/cjs/index.d.cts",
-        "default": "./dist/cjs/index.cjs"
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
       }
     }
   },
@@ -67,12 +67,17 @@
     "turf.min.js"
   ],
   "scripts": {
-    "build": "tsup",
+    "bench": "tsx bench.ts",
+    "build": "pnpm run /build:.*/",
+    "build:cjs": "tsc -b tsconfig.cjs.json",
+    "build:esm": "tsc -b",
+    "docs": "tsx ../../scripts/generate-readmes.ts",
     "last-checks": "pnpm run last-checks:testjs && pnpm run last-checks:example",
     "last-checks:example": "tsx test.example.js",
     "last-checks:testjs": "tsx test.ts",
     "rollup": "rollup -c rollup.config.js",
-    "test": "echo '@turf/turf tests run in the last-checks step'"
+    "test": "pnpm run /test:.*/",
+    "test:tape": "tsx test.ts"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",
@@ -81,7 +86,9 @@
     "@rollup/plugin-commonjs": "^28.0.3",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-terser": "^0.4.4",
+    "@types/benchmark": "^2.1.5",
     "@types/tape": "^5.8.1",
+    "benchmark": "^2.1.4",
     "camelcase": "^8.0.0",
     "documentation": "^14.0.3",
     "glob": "^11.1.0",

@@ -221,8 +221,8 @@ test("turf -- parsing dependencies from index.js", (t) => {
 // Test for missing modules
 test("turf -- missing modules", (t) => {
   const files = {
-    typescript: fs.readFileSync(path.join(__dirname, "dist/cjs/index.d.cts")),
-    modules: fs.readFileSync(path.join(__dirname, "dist/cjs/index.cjs")),
+    typescript: fs.readFileSync(path.join(__dirname, "dist/cjs/index.d.ts")),
+    modules: fs.readFileSync(path.join(__dirname, "dist/cjs/index.js")),
   };
 
   modules.forEach(({ name }) => {

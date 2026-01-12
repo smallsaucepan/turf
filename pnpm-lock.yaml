@@ -92,9 +92,6 @@ importers:
       progress:
         specifier: ^2.0.3
         version: 2.0.3
-      tsup:
-        specifier: ^8.4.0
-        version: 8.4.0(postcss@8.5.3)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.1)
       tsx:
         specifier: ^4.19.4
         version: 4.19.4
@@ -474,9 +471,15 @@ importers:
       '@rollup/plugin-terser':
         specifier: ^0.4.4
         version: 0.4.4(rollup@4.40.1)
+      '@types/benchmark':
+        specifier: ^2.1.5
+        version: 2.1.5
       '@types/tape':
         specifier: ^5.8.1
         version: 5.8.1
+      benchmark:
+        specifier: ^2.1.4
+        version: 2.1.4
       camelcase:
         specifier: ^8.0.0
         version: 8.0.0

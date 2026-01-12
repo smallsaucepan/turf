@@ -1,14 +1,9 @@
 {
   "extends": "../../tsconfig.shared.json",
   "include": [
-    "index.js"
+    "index.ts",
+    "lib/**/*.ts"
   ],
-  "compilerOptions": {
-    "composite": false,
-    "allowJs": true,
-    "checkJs": false,
-    "noEmit": true
-  },
   "references": [
     {
       "path": "../turf-bbox"
