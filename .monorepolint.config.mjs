@@ -225,11 +225,11 @@ export default {
     requireDependency({
       options: {
         devDependencies: {
-          benchmark: "^2.1.4",
+          benchmark: "catalog:",
           glob: REMOVE,
-          tape: "^5.9.0",
-          tsup: "^8.4.0",
-          tsx: "^4.19.4",
+          tape: "catalog:",
+          tsup: "catalog:",
+          tsx: "catalog:",
         },
       },
       includePackages: PACKAGES,
@@ -238,12 +238,12 @@ export default {
     requireDependency({
       options: {
         dependencies: {
-          tslib: "^2.8.1",
+          tslib: "catalog:",
         },
         devDependencies: {
-          "@types/benchmark": "^2.1.5",
-          "@types/tape": "^5.8.1",
-          typescript: "^5.8.3",
+          "@types/benchmark": "catalog:",
+          "@types/tape": "catalog:",
+          typescript: "catalog:",
         },
       },
       includePackages: PACKAGES,
@@ -252,7 +252,7 @@ export default {
     requireDependency({
       options: {
         devDependencies: {
-          tstyche: "^6.2.0",
+          tstyche: "catalog:",
         },
       },
       includePackages: TSTYCHE_PACKAGES,
@@ -261,7 +261,7 @@ export default {
     requireDependency({
       options: {
         dependencies: {
-          "@types/geojson": "^7946.0.10",
+          "@types/geojson": "catalog:",
         },
       },
       includePackages: [MAIN_PACKAGE, ...PACKAGES],
