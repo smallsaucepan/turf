@@ -14,6 +14,9 @@
       "path": "../turf-clone"
     },
     {
+      "path": "../turf-distance"
+    },
+    {
       "path": "../turf-helpers"
     },
     {

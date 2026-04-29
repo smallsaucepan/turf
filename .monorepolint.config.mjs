@@ -1,6 +1,6 @@
 import * as path from "node:path";
-import { glob } from "glob";
-import * as fs from "node:fs";
+import { existsSync } from "node:fs";
+import * as fs from "node:fs/promises";
 import {
   alphabeticalDependencies,
   alphabeticalScripts,
@@ -8,35 +8,43 @@ import {
   packageEntry,
   packageScript,
   requireDependency,
+  REMOVE,
   standardTsconfig,
   fileContents,
 } from "@monorepolint/rules";
 
-const BUILD_PACKAGES = []; // packages to build using Typescript
+const PACKAGES = []; // packages that aren't @turf/turf
 const AGG_PACKAGE = "@turf/turf"; // aggregate package utilising rollup
 
 const TAPE_PACKAGES = []; // packages with tape tests
 const TYPES_PACKAGES = []; // packages with types tests
+const TSTYCHE_PACKAGES = []; // packages that use tstyche for type tests.
 
 // iterate all the packages and figure out what buckets everything falls into
-const __dirname = new URL(".", import.meta.url).pathname;
-glob.sync(path.join(__dirname, "packages", "*")).forEach((pk) => {
-  const name = JSON.parse(
-    fs.readFileSync(path.join(pk, "package.json"), "utf8")
-  ).name;
-
-  if (fs.existsSync(path.join(pk, "index.ts"))) {
-    BUILD_PACKAGES.push(name);
+const packagesPath = path.join(process.cwd(), "packages");
+for (const pk of await fs.readdir(packagesPath)) {
+  if (pk === "turf") {
+    continue;
   }
 
-  if (fs.existsSync(path.join(pk, "test.ts"))) {
+  const name = JSON.parse(
+    await fs.readFile(path.join(packagesPath, pk, "package.json"), "utf8")
+  ).name;
+
+  PACKAGES.push(name);
+
+  if (existsSync(path.join(pk, "test.ts"))) {
     TAPE_PACKAGES.push(name);
   }
 
-  if (fs.existsSync(path.join(pk, "types.ts"))) {
+  if (existsSync(path.join(packagesPath, pk, "types.ts"))) {
     TYPES_PACKAGES.push(name);
   }
-});
+
+  if (existsSync(path.join(packagesPath, pk, "test/types.tst.ts"))) {
+    TSTYCHE_PACKAGES.push(name);
+  }
+}
 
 export default {
   rules: [
@@ -78,14 +86,14 @@ export default {
     alphabeticalScripts({ includeWorkspaceRoot: true }),
     standardTsconfig({
       options: { templateFile: "./templates/package/tsconfig.json" },
-      includePackages: BUILD_PACKAGES,
+      includePackages: [...PACKAGES, AGG_PACKAGE],
     }),
     standardTsconfig({
       options: {
         file: "tsconfig.cjs.json",
         templateFile: "./templates/package/tsconfig.cjs.json",
       },
-      includePackages: BUILD_PACKAGES,
+      includePackages: [...PACKAGES, AGG_PACKAGE],
     }),
     packageEntry({
       options: {
@@ -113,7 +121,7 @@ export default {
           },
         },
       },
-      includePackages: BUILD_PACKAGES,
+      includePackages: PACKAGES,
     }),
     packageEntry({
       options: {
@@ -121,7 +129,7 @@ export default {
           files: ["dist"],
         },
       },
-      includePackages: BUILD_PACKAGES,
+      includePackages: PACKAGES,
       excludePackages: [AGG_PACKAGE],
     }),
     packageEntry({
@@ -147,7 +155,7 @@ export default {
     packageScript({
       options: {
         scripts: {
-          docs: "tsx ../../scripts/generate-readmes.ts",
+          docs: REMOVE,
           rollup: "rollup -c rollup.config.js",
           test: "pnpm run /test:.*/",
         },
@@ -162,7 +170,7 @@ export default {
           "build:esm": "tsc -b",
         },
       },
-      includePackages: BUILD_PACKAGES,
+      includePackages: PACKAGES,
     }),
 
     packageScript({
@@ -192,22 +200,50 @@ export default {
       includePackages: TYPES_PACKAGES,
     }),
 
+    packageScript({
+      options: {
+        scripts: {
+          "test:types": "tstyche",
+        },
+      },
+      includePackages: TSTYCHE_PACKAGES,
+    }),
+
     requireDependency({
       options: {
         dependencies: {
-          "@types/geojson": "^7946.0.10",
-          tslib: "^2.8.1",
+          "@types/geojson": "catalog:",
+          tslib: "catalog:",
         },
         devDependencies: {
-          "@types/benchmark": "^2.1.5",
-          "@types/tape": "^5.8.1",
-          benchmark: "^2.1.4",
-          tape: "^5.9.0",
-          tsx: "^4.19.4",
-          typescript: "^5.8.3",
+          "@types/benchmark": "catalog:",
+          "@types/tape": "catalog:",
+          benchmark: "catalog:",
+          tape: "catalog:",
+          tsx: "catalog:",
+          typescript: "catalog:",
         },
       },
-      includePackages: BUILD_PACKAGES,
+      includePackages: [...PACKAGES, AGG_PACKAGE],
+    }),
+
+    requireDependency({
+      options: {
+        devDependencies: {
+          glob: REMOVE,
+        },
+      },
+      // Keep glob for @turf/turf test for now. Remove after refactoring.
+      includePackages: PACKAGES,
+    }),
+
+    requireDependency({
+      options: {
+        devDependencies: {
+          tstyche: "catalog:",
+        },
+      },
+      includePackages: TSTYCHE_PACKAGES,
     }),
   ],
 };

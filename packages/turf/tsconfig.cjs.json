@@ -131,6 +131,9 @@
       "path": "../turf-difference"
     },
     {
+      "path": "../turf-directional-mean"
+    },
+    {
       "path": "../turf-dissolve"
     },
     {
