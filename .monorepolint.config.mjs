@@ -165,12 +165,13 @@ export default {
     packageScript({
       options: {
         scripts: {
-          build: "pnpm run /build:.*/",
-          "build:cjs": "tsc -b tsconfig.cjs.json",
-          "build:esm": "tsc -b",
+          build: "tsc -b",
+          "build:cjs": REMOVE,
+          "build:esm": REMOVE,
+          prepack: "tsc -b tsconfig.cjs.json",
         },
       },
-      includePackages: PACKAGES,
+      includePackages: [...PACKAGES, AGG_PACKAGE],
     }),
 
     packageScript({

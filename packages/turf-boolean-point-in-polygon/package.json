@@ -47,9 +47,8 @@
   ],
   "scripts": {
     "bench": "tsx bench.ts",
-    "build": "pnpm run /build:.*/",
-    "build:cjs": "tsc -b tsconfig.cjs.json",
-    "build:esm": "tsc -b",
+    "build": "tsc -b",
+    "prepack": "tsc -b tsconfig.cjs.json",
     "test": "pnpm run /test:.*/",
     "test:tape": "tsx test.ts"
   },
@@ -58,7 +57,6 @@
     "@types/tape": "catalog:",
     "benchmark": "catalog:",
     "tape": "catalog:",
-    "tsup": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:"
   },
