@@ -11,15 +11,15 @@
     "escheck:web": "es-check es5 packages/turf/turf.min.js",
     "lint": "pnpm run /lint:.*/",
     "lint:docs": "documentation lint packages/turf-*/index.js",
-    "lint:eslint": "eslint packages",
+    "lint:eslint": "eslint --cache packages",
     "lint:mrl": "mrl check",
-    "lint:prettier": "prettier --check .",
+    "lint:prettier": "prettier --cache --check .",
     "preinstall": "npx only-allow pnpm",
     "prepack": "tsc -b ./tsconfig.cjs.json && tsx scripts/cjs-package-json.ts && pnpm run --filter @turf/turf rollup",
-    "prepare": "husky",
+    "prepare": "husky && tsc -b",
     "prepublishOnly": "pnpm run lint && pnpm run escheck && pnpm run --filter @turf/turf last-checks",
     "release": "pnpm run test:release && pnpm publish -r",
-    "test": "pnpm --recursive run test",
+    "test": "pnpm exec nx run-many -t test",
     "test:release": "pnpm run lint && pnpm run escheck && pnpm run --filter @turf/turf last-checks",
     "watch": "tsc -b --watch"
   },
@@ -30,7 +30,7 @@
     "**/*.{js,ts}": [
       "eslint --fix"
     ],
-    "packages/*/index.{js,ts}": [
+    "packages/*/index.ts": [
       "node ./scripts/generate-readmes.mts",
       "git add ./packages/*/README.md"
     ],
@@ -63,6 +63,7 @@
     "lint-staged": "^15.5.1",
     "load-json-file": "^7.0.1",
     "meow": "^13.2.0",
+    "nx": "^22.7.1",
     "prettier": "^3.5.3",
     "progress": "^2.0.3",
     "tsx": "^4.19.4",
